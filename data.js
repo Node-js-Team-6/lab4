@@ -7,7 +7,7 @@ const writefileAsync = util.promisify(fs.writeFile);
 
 class Repository {
 
-    constructor(filePath, mapToCustomTypeFunction, logger = null) {
+    constructor(filePath, mapToCustomTypeFunction, logger = console) {
         this.filePath = filePath;
         this.logger = logger;
         this.dataMapperToCustomType = mapToCustomTypeFunction;
@@ -118,11 +118,19 @@ class Repository {
     insert(item) {
         item.id = this._nextId++;
         this.Data.push(item);
+
+        const msg = `${Date.now()}. Inserted one element with id = '${item.id}' to "${this.filePath}"\n`;
+        this.logger.log(msg);  
     }
 
     delete(id) {
         const ind = this.Data.indexOf(o => o.id === id);
-        this.Data.splice(ind, 1);
+        if(ind > 0) {
+            this.Data.splice(ind, 1);
+
+            const msg = `${Date.now()}. Deleted one element with id = '${item.id}' from "${this.filePath}"\n`;
+            this.logger.log(msg);  
+        }
     }
 
     find(id) {
@@ -137,11 +145,19 @@ class Repository {
         const ind = this.Data.indexOf(o => o.id === id);
         if(ind > -1) {
             this.Data[ind] = item;
+
+            const msg = `${Date.now()}. Modified one element with id = '${item.id}' in "${this.filePath}"\n`;
+            this.logger.log(msg); 
         }
     }
 
+    saveVersion(callback) {
+        var compress = zlib.createGzip(),
+        input = fs.createReadStream(filename),
+        output = fs.createWriteStream(filename + '.gz');
 
+        input.pipe(compress).pipe(output);
+    }
 }
-
 
 exports.Repositoty = Repository;
