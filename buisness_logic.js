@@ -12,14 +12,35 @@ let folderRepository = new data.Repositoty('./database/classes.folder.json', Fol
 let userRepository = new data.Repositoty('./database/user.json', User.constructor)
 let ratingRepository = new data.Repositoty('./database/rating.json', Rating.constructor)
 
-function addFile(){
 
 
+function addOrUpdateFile(file){
+    fileRepository.addOrUpdate(file)
 }
 
-function deleteFile(){
-
+function deleteFile(file){
+    fileRepository.delete(file)
 }
+
+function addOrUpdateFolder(folder){
+    folderRepository.addOrUpdate(folder)
+}
+
+function deleteFolder(folder){
+    folderRepository.delete(folder)
+}
+
+
+function addOrUpdateUser(user){
+    userRepository.addOrUpdate(user)
+}
+
+function deleteUser(user){
+    userRepository.delete(user)
+}
+
+
+
 
 function sortByDownloadCount(folder)
 {
@@ -33,7 +54,7 @@ function sortByRating(folder)
         b.rating - a.rating);
 }
 
-function sortByAuthor(folder)
+function sortByAuthor()
 {
     folder.children.sort(function (a, b) {
         if (a.user.name > b.user.name) return 1;
