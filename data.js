@@ -1,14 +1,27 @@
 // ----------- data access layer -----------------
 const fs = require('fs');
 const util = require('util')
-const classes = require('./classes');
+const classes = require('./classes.js');
 
 const readFileAsync = util.promisify(fs.readFile);
+const writefileAsync = util.promisify(fs.writeFile);
 
-class DataReader {
-    constructor(filePath, logger = null) {
+class Repository {
+
+    constructor(filePath, mapToCustomTypeFunction, logger = null) {
         this.filePath = filePath;
         this.logger = logger;
+        this.dataMapperToCustomType = mapToCustomTypeFunction;
+
+        this.Data = [];
+    }
+
+    async readData() {
+        this.Data = await this.findAllAsync();
+    }
+
+    async writeData() {
+        await this.writeAllAsync();
     }
 
     findAllCallback(callback = function() {}) {
@@ -21,12 +34,10 @@ class DataReader {
             }
             else {
                 const end = Date.now();
-                const msg = `${end}. Data was read from file "${this.filePath}". Reading took ${end - start}s\n`
+                const msg = `${end}. Data was read from file "${this.filePath}". Reading took ${end - start}s\n`;
                 this.logger.log(msg);
 
-                //data to objects
-
-                callback(data);
+                callback(this.getData(data));
             }
         });
     }
@@ -43,12 +54,10 @@ class DataReader {
                 }
                 else {
                     const end = Date.now();
-                    const msg = `${end}. Data was read from file "${this.filePath}". Reading took ${end - start}s\n`
+                    const msg = `${end}. Data was read from file "${this.filePath}". Reading took ${end - start}s\n`;
                     this.logger.log(msg);
 
-                    //data to objects
-
-                    resolve(data);
+                    resolve(this.getData(data));
                 }
             })
         });
@@ -60,11 +69,10 @@ class DataReader {
         try {
             data = await readFileAsync(this.filePath, 'utf-8');
             const end = Date.now();
-            const msg = `${end}. Data was read from file "${this.filePath}". Reading took ${end - start}s\n`
+            const msg = `${end}. Data was read from file "${this.filePath}". Reading took ${end - start}s\n`;
             this.logger.log(msg);
-            //data to object
 
-            return //object;
+            return this.getData(data);
         }
         catch(err) {
             const msg = `${start}. an error occured while reading data from file "${this.filePath}"\n Error: "${err}"`;
@@ -72,12 +80,44 @@ class DataReader {
         }
     }
 
-    insert(item) {
+    async writeAllAsync() {
+        const start = Date.now();
+        
+        try {
+            let data = [];
+            for(const item in this.Data) {
+                data.push(item.jsonify());
+            }
+            const str = JSON.stringify(data);
 
+            data = await writefileAsync(this.filePath, str, 'utf-8');
+            const end = Date.now();
+            const msg = `${end}. Data was written to file "${this.filePath}". Writing took ${end - start}s\n`;
+            this.logger.log(msg);
+        }
+        catch(err) {
+            const msg = `${start}. an error occured while reading data from file "${this.filePath}"\n Error: "${err}"`;
+            this.logger.log(msg);  
+        }
+    }
+    
+    getData = (string) => {
+        
+        const source = JSON.parse(string);
+        let data = [];
+
+        for(const elem of source) {
+            data.push(this.dataMapperToCustomType(elem));
+        };
+
+        return data;
+    };
+
+    insert(item) {
+        this.Data.push(item);
     }
 
     delete(item) {
-
     }
 
     find(id) {
@@ -88,3 +128,5 @@ class DataReader {
         
     }
 }
+
+exports.Repositoty = Repository;
