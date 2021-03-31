@@ -32,7 +32,7 @@ class Repository {
 
         fs.readFile(this.filePath, 'utf-8', (err, data) => {
             if(err) {
-                const msg = `${start}. an error occured while reading data from file "${this.filePath}"\n Error: "${err}"`;
+                const msg = `${start}. an error occured while reading data from file "${this.filePath}"\n Error: "${err}"\n`;
                 this.logger.log(msg);              
             }
             else {
@@ -51,7 +51,7 @@ class Repository {
         return new Promise((resolve, reject) => {
             fs.readFile(this.filePath, 'utf-8', (err, data) => {
                 if(err) {
-                    const msg = `${start}. an error occured while reading data from file "${this.filePath}"\n Error: "${err}"`;
+                    const msg = `${start}. an error occured while reading data from file "${this.filePath}"\n Error: "${err}"\n`;
                     this.logger.log(msg);  
                     reject(err);            
                 }
@@ -78,7 +78,7 @@ class Repository {
             return this.getCustomizedObjects(data);
         }
         catch(err) {
-            const msg = `${start}. an error occured while reading data from file "${this.filePath}"\n Error: "${err}"`;
+            const msg = `${start}. an error occured while reading data from file "${this.filePath}"\n Error: "${err}"\n`;
             this.logger.log(msg);  
         }
     }
@@ -100,7 +100,7 @@ class Repository {
             this.logger.log(msg);
         }
         catch(err) {
-            const msg = `${start}. an error occured while reading data from file "${this.filePath}"\n Error: "${err}"`;
+            const msg = `${start}. an error occured while reading data from file "${this.filePath}"\n Error: "${err}"\n`;
             this.logger.log(msg);  
         }
     }

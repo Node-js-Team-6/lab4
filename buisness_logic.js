@@ -1,17 +1,17 @@
 const data = require('./data.js')
-const classes = require('./classes.js')
 
-const {Folder} = require('./classes.js');
-const {File} = require('./classes.js');
-const {Rating} = require("./classes");
-const {User} = require("./classes");
+const { Folder } = require('./classes.js');
+const { File } = require('./classes.js');
+const { Rating } = require("./classes");
+const { User } = require("./classes");
+const { VersionManager } = require('./versioning');
 
+const vm = new VersionManager('./database', './versionHistory.json');
 
-let fileRepository = new data.Repositoty('./database/file.json', File.constructor)
-let folderRepository = new data.Repositoty('./database/classes.folder.json', Folder.constructor)
-let userRepository = new data.Repositoty('./database/user.json', User.constructor)
-let ratingRepository = new data.Repositoty('./database/rating.json', Rating.constructor)
-
+let fileRepository = new data.Repositoty('./database/file.json', File.constructor, vm)
+let folderRepository = new data.Repositoty('./database/classes.folder.json', Folder.constructor, vm)
+let userRepository = new data.Repositoty('./database/user.json', User.constructor, vm)
+let ratingRepository = new data.Repositoty('./database/rating.json', Rating.constructor, vm)
 
 
 function addOrUpdateFile(file){

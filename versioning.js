@@ -5,10 +5,11 @@ class VersionManager {
     constructor(dataPath, innerDatafileName, logger = console) {
         this.logger = logger;
         this.history = [];
+        this.innerDatafileName = innerDatafileName;
         this.initial = './Versions/';
         this.dataPath = dataPath;
 
-        this.readData(innerDatafileName).then(value => this.history = value);
+        this.readData(this.innerDatafileName).then(value => this.history = value);
     }
 
     async saveVersion() {
@@ -16,7 +17,7 @@ class VersionManager {
 
         fs.readdir(this.dataPath, (err, files) => {
             if(err) {
-                const msg = `${Date.now()}. an error occured while reading data from file "${this.dataPath}"\n Error: "${err}"`;
+                const msg = `${Date.now()}. an error occured while reading data from file "${this.dataPath}"\n Error: "${err}"\n`;
                 this.logger.log(msg); 
             }
             else {
@@ -32,7 +33,8 @@ class VersionManager {
                 }
                 this.history.push(versionName);	
                 
-                logger.log(`Version '${versionName}' saved`);
+                logger.log(`Version '${versionName}' saved\n`);
+                this.writeData(this.innerDatafileName);
             }
         });		
     }
@@ -46,7 +48,7 @@ class VersionManager {
         
         fs.readdir(this.initial + versionName, (err, files) => {
             if(err) {
-                const msg = `${Date.now()}. an error occured while reading data from file "${this.initial + versionName}"\n Error: "${err}"`;
+                const msg = `${Date.now()}. an error occured while reading data from file "${this.initial + versionName}"\n Error: "${err}"\n`;
                 this.logger.log(msg); 
             }
             else {
@@ -57,7 +59,8 @@ class VersionManager {
                     fileContents.pipe(unzip).pipe(writeStream);
                 });
                     
-                logger.log(`Version rolled back to ${versionName}`);
+                logger.log(`Version rolled back to ${versionName}\n`);
+                this.writeData(this.innerDatafileName);
             }
         });	
     }
@@ -66,7 +69,7 @@ class VersionManager {
         new Promise((resolve, reject) => {
             fs.readFile(filePath, 'utf-8', (err, data) => {
                 if(err) {
-                    const msg = `${start}. an error occured while reading data from file "${filePath}"\n Error: "${err}"`;
+                    const msg = `${start}. an error occured while reading data from file "${filePath}"\n Error: "${err}"\n`;
                     this.logger.log(msg);  
                     reject(err);            
                 }
@@ -79,7 +82,15 @@ class VersionManager {
                 }
             })
         });
-    
+
+    writeData = filePath =>
+        new Promise((resolve, reject) => {
+            fs.writeFile(filePath, JSON.stringify(this.history), 'utf-8', () => {
+                const end = Date.now();
+                const msg = `${end}. Data has been written to file "${filePath}"\n`;
+                this.logger.log(msg);
+            })
+        });
 }
 
 exports.VersionManager = VersionManager;
