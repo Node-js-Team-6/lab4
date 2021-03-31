@@ -125,6 +125,17 @@ class Repository {
         this.Data.splice(ind, 1);
     }
 
+    addOrUpdate(item){
+        if(this.find(item.id) == null){
+            this.insert(item)
+        } else {
+            this.modify(item)
+        }
+
+
+
+    }
+
     find(id) {
         return this.Data.find(o => o.id === id);
     }

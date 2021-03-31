@@ -12,6 +12,8 @@ let folderRepository = new data.Repositoty('./database/classes.folder.json', Fol
 let userRepository = new data.Repositoty('./database/user.json', User.constructor)
 let ratingRepository = new data.Repositoty('./database/rating.json', Rating.constructor)
 
+
+
 function addFile(file){
     fileRepository.insert(file)
 }
@@ -27,6 +29,20 @@ function addFolder(folder){
 function deleteFolder(folder){
     folderRepository.delete(folder)
 }
+
+
+function addUser(user){
+    userRepository.insert(user)
+}
+
+function deleteUser(user){
+    userRepository.delete(user)
+}
+
+
+
+
+
 
 function sortByDownloadCount()
 {
