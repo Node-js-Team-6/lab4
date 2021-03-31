@@ -27,16 +27,19 @@ function addOrUpdateFolder(folder){
 }
 
 function deleteFolder(folder){
+    for(let c in folder.children){
+        if(c instanceof Folder){
+            deleteFolder(c)
+        } else {
+            deleteFile(c)
+        }
+    }
     folderRepository.delete(folder)
 }
 
 
 function addOrUpdateUser(user){
     userRepository.addOrUpdate(user)
-}
-
-function deleteUser(user){
-    userRepository.delete(user)
 }
 
 function sortByDownloadCount(folder)
@@ -66,6 +69,7 @@ function sortByName(folder)
         if (a.name < b.name) return -1;
         return 0});
 }
+
 
 function findFileByName(folder, searchText) {
     return folder.children.filter(file => file.name.startsWith(searchText));
