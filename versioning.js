@@ -2,31 +2,39 @@ const zlib = require('zlib');
 const fs = require('fs');
 
 class VersionManager {
-    constructor(innerDatafileName, logger = console) {
+    constructor(dataPath, innerDatafileName, logger = console) {
         this.logger = logger;
         this.history = [];
-        this.initial = './Versions';
+        this.initial = './Versions/';
+        this.dataPath = dataPath;
 
         this.readData(innerDatafileName).then(value => this.history = value);
     }
 
-    saveVersion() {
+    async saveVersion() {
         const versionName = Date.now();
 
-        const files = fs.readdirSync(this.initial + versionName);
-        files.forEach(filename => {
-            const fileContents = fs.createReadStream(`./database/${filename}`);
-            const writeStream = fs.createWriteStream(`${this.initial + versionName}/${filename}.gz`);
-            const zip = zlib.createGzip();
-            fileContents.pipe(zip).pipe(writeStream);
-        })
-
-        if(!this.history) {
-            this.history = [];
-        }
-        this.history.push(versionName);	
+        fs.readdir(this.dataPath, (err, files) => {
+            if(err) {
+                const msg = `${Date.now()}. an error occured while reading data from file "${this.dataPath}"\n Error: "${err}"`;
+                this.logger.log(msg); 
+            }
+            else {
+                files.forEach(filename => {
+                    const fileContents = fs.createReadStream(`${this.dataPath}/${filename}`);
+                    const writeStream = fs.createWriteStream(`${this.initial + versionName}/${filename}.gz`);
+                    const zip = zlib.createGzip();
+                    fileContents.pipe(zip).pipe(writeStream);
+                })
         
-        logger.log("Version saved");		
+                if(!this.history) {
+                    this.history = [];
+                }
+                this.history.push(versionName);	
+                
+                logger.log(`Version '${versionName}' saved`);
+            }
+        });		
     }
 
     rollbackVersion() {
@@ -35,16 +43,23 @@ class VersionManager {
         }
 
         const versionName = this.history.pop();
-
-        const files = fs.readdirSync(this.initial + versionName);
-        files.forEach(filename => {
-            const fileContents = fs.createReadStream(`${this.initial + versionName}/${filename}.gz`);
-            const writeStream = fs.createWriteStream(`./database/${filename.slice(0, -3)}`);
-            const unzip = zlib.createGunzip();
-            fileContents.pipe(unzip).pipe(writeStream);
-        })
         
-        logger.log("Version rolled back");
+        fs.readdir(this.initial + versionName, (err, files) => {
+            if(err) {
+                const msg = `${Date.now()}. an error occured while reading data from file "${this.initial + versionName}"\n Error: "${err}"`;
+                this.logger.log(msg); 
+            }
+            else {
+                files.forEach(filename => {
+                    const fileContents = fs.createReadStream(`${this.initial + versionName}/${filename}.gz`);
+                    const writeStream = fs.createWriteStream(`${this.dataPath}/${filename.slice(0, -3)}`);
+                    const unzip = zlib.createGunzip();
+                    fileContents.pipe(unzip).pipe(writeStream);
+                });
+                    
+                logger.log(`Version rolled back to ${versionName}`);
+            }
+        });	
     }
 
     readData = (filePath) => 

@@ -7,9 +7,10 @@ const writefileAsync = util.promisify(fs.writeFile);
 
 class Repository {
 
-    constructor(filePath, mapToCustomTypeFunction, logger = console) {
+    constructor(filePath, mapToCustomTypeFunction, versionManager, logger = console) {
         this.filePath = filePath;
         this.logger = logger;
+        this.versionManager = versionManager;
         this.dataMapperToCustomType = mapToCustomTypeFunction;
 
         this.Data = [];
@@ -23,6 +24,7 @@ class Repository {
 
     async writeData() {
         await this.writeAllAsync();
+        this.versionManager.saveVersion();
     }
 
     readAllCallback(callback = function() {}) {
@@ -115,12 +117,14 @@ class Repository {
         return data;
     };
 
-    insert(item) {
+    async insert(item) {
         item.id = this._nextId++;
         this.Data.push(item);
 
         const msg = `${Date.now()}. Inserted one element with id = '${item.id}' to "${this.filePath}"\n`;
-        this.logger.log(msg);  
+        this.logger.log(msg); 
+        
+        await this.writeData();
     }
 
     delete(id) {
@@ -133,12 +137,14 @@ class Repository {
         }
     }
 
-    addOrUpdate(item){
+    async addOrUpdate(item){
         if(this.find(item.id) == null){
-            this.insert(item)
+            await this.insert(item)
         } else {
-            this.modify(item)
+            await this.modify(item)
         }
+
+        await this.writeData();
     }
 
     find(id) {
@@ -149,7 +155,7 @@ class Repository {
         return this.Data;
     }
 
-    modify(item) {
+    async modify(item) {
         const ind = this.Data.indexOf(o => o.id === id);
         if(ind > -1) {
             this.Data[ind] = item;
@@ -157,6 +163,8 @@ class Repository {
             const msg = `${Date.now()}. Modified one element with id = '${item.id}' in "${this.filePath}"\n`;
             this.logger.log(msg); 
         }
+
+        await this.writeData();
     }
 
     saveVersion(callback) {
