@@ -27,6 +27,13 @@ function addOrUpdateFolder(folder){
 }
 
 function deleteFolder(folder){
+    for(let c in folder.children){
+        if(c instanceof Folder){
+            deleteFolder(c)
+        } else {
+            deleteFile(c)
+        }
+    }
     folderRepository.delete(folder)
 }
 
@@ -34,13 +41,6 @@ function deleteFolder(folder){
 function addOrUpdateUser(user){
     userRepository.addOrUpdate(user)
 }
-
-function deleteUser(user){
-    userRepository.delete(user)
-}
-
-
-
 
 function sortByDownloadCount(folder)
 {
