@@ -1,8 +1,11 @@
-const data = require('data.js')
-const classes = require('classes.js')
+const data = require('./data.js')
+const classes = require('./classes.js')
+
+const {Folder} = require('./classes.js');
+const {File} = require('./classes.js');
 const {Rating} = require("./classes");
 const {User} = require("./classes");
-const {Folder} = require("./classes");
+
 
 let fileRepository = new data.Repositoty('./database/file.json', File.constructor)
 let folderRepository = new data.Repositoty('./database/classes.folder.json', Folder.constructor)

@@ -67,9 +67,8 @@ class Rating{
     }
 }
 
-exports = {
-    File: File,
-    Folder: Folder,
-    User: User,
-    Rating: Rating
-};
+module.exports.File = File;
+module.exports.Folder = Folder;
+module.exports.User = User;
+module.exports.Rating = Rating;
+
