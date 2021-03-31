@@ -2,9 +2,8 @@ const zlib = require('zlib');
 const fs = require('fs');
 
 class VersionManager {
-    constructor(folderPath, innerDatafileName, logger = console) {
+    constructor(innerDatafileName, logger = console) {
         this.logger = logger;
-        this.dataPath = folderPath;
         this.history = [];
         this.initial = './Versions';
 
