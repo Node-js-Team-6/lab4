@@ -67,3 +67,5 @@ class VersionManager {
         });
     
 }
+
+exports.VersionManager = VersionManager;
