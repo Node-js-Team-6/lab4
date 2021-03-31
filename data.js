@@ -68,7 +68,7 @@ class Repository {
         const start = Date.now();
         
         try {
-            data = await readFileAsync(this.filePath, 'utf-8');
+            let data = await readFileAsync(this.filePath, 'utf-8');
             const end = Date.now();
             const msg = `${end}. Data was read from file "${this.filePath}". Reading took ${end - start}s\n`;
             this.logger.log(msg);
@@ -139,6 +139,9 @@ class Repository {
             this.Data[ind] = item;
         }
     }
+
+
 }
+
 
 exports.Repositoty = Repository;
