@@ -39,9 +39,6 @@ function deleteUser(user){
     userRepository.delete(user)
 }
 
-
-
-
 function sortByDownloadCount(folder)
 {
     folder.children.sort( (a, b) => (a instanceof Folder || b instanceof Folder) ? 1 :
@@ -70,11 +67,16 @@ function sortByName(folder)
         return 0});
 }
 
-
 function findFileByName(folder, searchText) {
     return folder.children.filter(file => file.name.startsWith(searchText));
 }
 
 function findFileByExtension(folder, searchText) {
     return folder.children.filter(file => !(file instanceof Folder) && file.extension.startsWith(searchText));
+}
+
+function getPath(element, root){
+    if (element.id === root.id)
+        return element.name;
+    return getPath(folderRepository.find(element.parentId), root) + '/' + element.name;
 }

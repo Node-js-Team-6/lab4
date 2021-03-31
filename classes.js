@@ -1,6 +1,8 @@
 // --------- custom classes -------------
 
 class File{
+    parentId;
+    parent;
     id;
     name;
     extension;
@@ -16,8 +18,8 @@ class File{
 
     jsonify()
     {
-        return {id: this.id, name: this.name, extension: this.extension, userId: this.userId, size: this.size,
-            downloadCount: this.downloadCount, path: this.path}
+        return {parentId: this.parentId, id: this.id, name: this.name, extension: this.extension, userId: this.userId,
+            size: this.size, downloadCount: this.downloadCount, path: this.path}
     }
 }
 
