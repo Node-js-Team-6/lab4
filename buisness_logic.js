@@ -14,16 +14,16 @@ let ratingRepository = new data.Repositoty('./database/rating.json', Rating.cons
 
 
 
-function addFile(file){
-    fileRepository.insert(file)
+function addOrUpdateFile(file){
+    fileRepository.addOrUpdate(file)
 }
 
 function deleteFile(file){
     fileRepository.delete(file)
 }
 
-function addFolder(folder){
-    folderRepository.insert(folder)
+function addOrUpdateFolder(folder){
+    folderRepository.addOrUpdate(folder)
 }
 
 function deleteFolder(folder){
@@ -31,15 +31,13 @@ function deleteFolder(folder){
 }
 
 
-function addUser(user){
-    userRepository.insert(user)
+function addOrUpdateUser(user){
+    userRepository.addOrUpdate(user)
 }
 
 function deleteUser(user){
     userRepository.delete(user)
 }
-
-
 
 
 
