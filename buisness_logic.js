@@ -21,68 +21,39 @@ function deleteFile(){
 
 }
 
-function sortByDownloadCount()
+function sortByDownloadCount(folder)
 {
-    let currentFolder = Folder.from(JSON.parse(window.localStorage.getItem('currentFolder')));
-    currentFolder.children.sort((a, b) => b.downloadCount - a.downloadCount);
-    window.localStorage.setItem('currentFolder', JSON.stringify(currentFolder));
-    bodyRender();
+    folder.children.sort( (a, b) => (a instanceof Folder || b instanceof Folder) ? 1 :
+        b.downloadCount - a.downloadCount);
 }
 
-function sortByRating()
+function sortByRating(folder)
 {
-    let currentFolder = Folder.from(JSON.parse(window.localStorage.getItem('currentFolder')));
-    currentFolder.children.sort((a, b) => b.rating - a.rating);
-    window.localStorage.setItem('currentFolder', JSON.stringify(currentFolder));
-    bodyRender();
+    folder.children.sort((a, b) => (a instanceof Folder || b instanceof Folder) ? 1 :
+        b.rating - a.rating);
 }
 
-function sortByAuthor()
+function sortByAuthor(folder)
 {
-    let currentFolder = Folder.from(JSON.parse(window.localStorage.getItem('currentFolder')));
-    currentFolder.children.sort(function (a, b) {
+    folder.children.sort(function (a, b) {
         if (a.user.name > b.user.name) return 1;
         if (a.user.name < b.user.name) return -1;
         return 0});
-    window.localStorage.setItem('currentFolder', JSON.stringify(currentFolder));
-    bodyRender();
 }
 
-function sortByName()
+function sortByName(folder)
 {
-    let currentFolder = Folder.from(JSON.parse(window.localStorage.getItem('currentFolder')));
-    currentFolder.children.sort(function (a, b) {
+    folder.children.sort(function (a, b) {
         if (a.name > b.name) return 1;
         if (a.name < b.name) return -1;
         return 0});
-    window.localStorage.setItem('currentFolder', JSON.stringify(currentFolder));
-    bodyRender();
 }
 
-function findFileByName() {
-    const folder = Folder.from(JSON.parse(window.localStorage.getItem('all')));
-    let q = document.getElementById("fileNameSearch").value;
-    if (q === "" || q === null) {
-        window.localStorage.setItem('currentFolder', JSON.stringify(folder));
-        bodyRender();
-        return;
-    }
-    let res = folder.children.filter(file => file.name.startsWith(q));
-    folder.children = res;
-    window.localStorage.setItem('currentFolder', JSON.stringify(folder));
-    bodyRender();
+
+function findFileByName(folder, searchText) {
+    return folder.children.filter(file => file.name.startsWith(searchText));
 }
 
-function findFileByExtension() {
-    const folder = Folder.from(JSON.parse(window.localStorage.getItem('all')));
-    let q = document.getElementById("fileExtensionSearch").value;
-    if (q === "" || q === null) {
-        window.localStorage.setItem('currentFolder', JSON.stringify(folder));
-        bodyRender();
-        return;
-    }
-    let res = folder.children.filter(file => file.extension.startsWith(q));
-    folder.children = res;
-    window.localStorage.setItem('currentFolder', JSON.stringify(folder));
-    bodyRender();
+function findFileByExtension(folder, searchText) {
+    return folder.children.filter(file => !(file instanceof Folder) && file.extension.startsWith(searchText));
 }

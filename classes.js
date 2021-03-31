@@ -9,6 +9,7 @@ class File{
     size;
     downloadCount;
     rating;
+    path;
     constructor(data){
         Object.assign(this, data);
     }
@@ -16,7 +17,7 @@ class File{
     jsonify()
     {
         return {id: this.id, name: this.name, extension: this.extension, userId: this.userId, size: this.size,
-            downloadCount: this.downloadCount}
+            downloadCount: this.downloadCount, path: this.path}
     }
 }
 
@@ -28,13 +29,14 @@ class Folder{
     userId;
     user;
     children;
+    path;
     constructor(data){
         Object.assign(this, data);
     }
 
     jsonify()
     {
-        return {parentId: this.parentId, id: this.id, name: this.name, userId: this.userId}
+        return {parentId: this.parentId, id: this.id, name: this.name, userId: this.userId, path: this.path}
     }
 
 }
@@ -72,3 +74,5 @@ module.exports.Folder = Folder;
 module.exports.User = User;
 module.exports.Rating = Rating;
 
+let f = new File();
+console.log(f instanceof File)
