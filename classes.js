@@ -12,6 +12,12 @@ class File{
     constructor(data){
         Object.assign(this, data);
     }
+
+    jsonify()
+    {
+        return {id: this.id, name: this.name, extension: this.extension, userId: this.userId, size: this.size,
+            downloadCount: this.downloadCount}
+    }
 }
 
 class Folder{
@@ -21,11 +27,16 @@ class Folder{
     name;
     userId;
     user;
-    downloadCount;
     children;
     constructor(data){
         Object.assign(this, data);
     }
+
+    jsonify()
+    {
+        return {parentId: this.parentId, id: this.id, name: this.name, userId: this.userId}
+    }
+
 }
 
 class User{
@@ -34,14 +45,25 @@ class User{
     constructor(data){
         Object.assign(this, data);
     }
+
+    jsonify()
+    {
+        return {id: this.id, name: this.name}
+    }
 }
 
 class Rating{
     id;
     userId;
     fileId;
+    score;
     constructor(data){
         Object.assign(this, data);
+    }
+
+    jsonify()
+    {
+        return {id: this.id, userId: this.userId, fileId: this.fileId, score: this.score}
     }
 }
 
