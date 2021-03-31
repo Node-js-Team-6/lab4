@@ -1,6 +1,16 @@
-const data = require.('./data')
+const data = require('data.js')
+const classes = require('classes.js')
+const {Rating} = require("./classes");
+const {User} = require("./classes");
+const {Folder} = require("./classes");
+
+let fileRepository = new data.Repositoty('./database/file.json', File.constructor)
+let folderRepository = new data.Repositoty('./database/classes.folder.json', Folder.constructor)
+let userRepository = new data.Repositoty('./database/user.json', User.constructor)
+let ratingRepository = new data.Repositoty('./database/rating.json', Rating.constructor)
 
 function addFile(){
+
 
 }
 
