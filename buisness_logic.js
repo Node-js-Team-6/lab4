@@ -8,7 +8,7 @@ const { VersionManager } = require('./versioning.js');
 
 class Services {
     constructor() {
-        this.vm = new VersionManager('./database', './Versions/version_history.json');
+        this.vm = new VersionManager('./database');
         this.fileRepository = new data.Repositoty('./database/file.json', File.objectify)
         this.folderRepository = new data.Repositoty('./database/folder.json', Folder.objectify)
         this.userRepository = new data.Repositoty('./database/user.json', User.objectify)
