@@ -76,5 +76,3 @@ module.exports.Folder = Folder;
 module.exports.User = User;
 module.exports.Rating = Rating;
 
-let f = new File();
-console.log(f instanceof File)
