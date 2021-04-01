@@ -104,6 +104,15 @@ class Services {
             return element.name;
         return await this.getPath(await this.folderRepository.find(element.parentId), root) + '/' + element.name;
     }
+
+    async saveCurrentState(){
+        await vm.saveVersion();
+    }
+
+    async returnToPreviousVersion()
+    {
+        await vm.rollbackVersion();
+    }
 }
 
 exports.Services = Services;

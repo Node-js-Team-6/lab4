@@ -19,12 +19,7 @@ class Repository {
 
     async readData() {
         this.Data = await this.readAllAsync();
-        this._nextId = Math.max(this.Data.map(o => o.id));
-    }
-
-    async commit() {
-        await this.writeAllAsync();
-        this.versionManager.saveVersion();
+        this._nextId = Math.max(this.Data.map(o => o.id)) + 1;
     }
 
     readAllCallback(callback = function() {}) {
