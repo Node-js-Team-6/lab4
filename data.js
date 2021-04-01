@@ -88,7 +88,7 @@ class Repository {
         
         try {
             let data = [];
-            for(const item in this.Data) {
+            for(const item of this.Data) {
                 data.push(item.jsonify());
             }
             const str = JSON.stringify(data);

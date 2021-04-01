@@ -91,6 +91,7 @@ class VersionManager {
                 this.logger.log(msg);
             })
         });
+
 }
 
 exports.VersionManager = VersionManager;
