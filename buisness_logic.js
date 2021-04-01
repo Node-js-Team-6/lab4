@@ -2,9 +2,9 @@ const data = require('./data.js')
 
 const { Folder } = require('./classes.js');
 const { File } = require('./classes.js');
-const { Rating } = require("./classes");
-const { User } = require("./classes");
-const { VersionManager } = require('./versioning');
+const { Rating } = require("./classes.js");
+const { User } = require("./classes.js");
+const { VersionManager } = require('./versioning.js');
 
 class Services {
     constructor() {
