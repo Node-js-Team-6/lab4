@@ -127,13 +127,15 @@ class Repository {
         await this.writeData();
     }
 
-    delete(id) {
+    async delete(id) {
         const ind = this.Data.indexOf(o => o.id === id);
         if(ind > 0) {
             this.Data.splice(ind, 1);
 
             const msg = `${Date.now()}. Deleted one element with id = '${item.id}' from "${this.filePath}"\n`;
-            this.logger.log(msg);  
+            this.logger.log(msg);
+            
+            await this.writeData();
         }
     }
 
@@ -167,13 +169,13 @@ class Repository {
         await this.writeData();
     }
 
-    saveVersion(callback) {
+    /*saveVersion(callback) {
         var compress = zlib.createGzip(),
         input = fs.createReadStream(filename),
         output = fs.createWriteStream(filename + '.gz');
 
         input.pipe(compress).pipe(output);
-    }
+    }*/
 }
 
 exports.Repositoty = Repository;
