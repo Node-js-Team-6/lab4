@@ -8,11 +8,16 @@ const { VersionManager } = require('./versioning.js');
 
 class Services {
     constructor() {
-        const vm = new VersionManager('./database', './versionHistory.json');
-        this.fileRepository = new data.Repositoty('./database/file.json', File.constructor, vm)
-        this.folderRepository = new data.Repositoty('./database/classes.folder.json', Folder.constructor, vm)
-        this.userRepository = new data.Repositoty('./database/user.json', User.constructor, vm)
-        this.ratingRepository = new data.Repositoty('./database/rating.json', Rating.constructor, vm)
+        this.vm = new VersionManager('./database', './Versions/version_history.json');
+        this.fileRepository = new data.Repositoty('./database/file.json', File.objectify)
+        this.folderRepository = new data.Repositoty('./database/folder.json', Folder.objectify)
+        this.userRepository = new data.Repositoty('./database/user.json', User.objectify)
+        this.ratingRepository = new data.Repositoty('./database/rating.json', Rating.objectify)
+
+        this.vm.subscribe_for_rollback(this.fileRepository.readData);
+        this.vm.subscribe_for_rollback(this.folderRepository.readData);
+        this.vm.subscribe_for_rollback(this.userRepository.readData);
+        this.vm.subscribe_for_rollback(this.ratingRepository.readData);
     }
 
     async addOrUpdateFile(file) {
@@ -35,6 +40,11 @@ class Services {
         let folderChildren = await this.folderRepository.findAll().filter(f => f.parentId === folder.id);
         let fileChildren = await this.fileRepository.findAll().filter(f => f.parentId === folder.id)
         folder.children = [...folderChildren, ...fileChildren]
+    }
+
+    async getRoot()
+    {
+        return await this.folderRepository.find(994);
     }
 
     async getRating(file)
@@ -103,6 +113,15 @@ class Services {
         if (element.id === root.id)
             return element.name;
         return await this.getPath(await this.folderRepository.find(element.parentId), root) + '/' + element.name;
+    }
+
+    async saveCurrentState(){
+        await this.vm.saveVersion();
+    }
+
+    async returnToPreviousVersion()
+    {
+        await this.vm.rollbackVersion();
     }
 }
 
