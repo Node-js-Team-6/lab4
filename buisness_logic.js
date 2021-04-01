@@ -19,6 +19,10 @@ class Services {
         await this.fileRepository.addOrUpdate(file)
     }
 
+    async addOrUpdateRating(rating) {
+        await this.ratingRepository.addOrUpdate(rating);
+    }
+
     async deleteFile(file) {
         await this.fileRepository.delete(file)
     }
