@@ -1,6 +1,6 @@
 // ----------- data access layer -----------------
 const fs = require('fs');
-const util = require('util')
+const util = require('util');
 
 const readFileAsync = util.promisify(fs.readFile);
 const writefileAsync = util.promisify(fs.writeFile);
@@ -22,7 +22,7 @@ class Repository {
         this._nextId = Math.max(this.Data.map(o => o.id));
     }
 
-    async writeData() {
+    async commit() {
         await this.writeAllAsync();
         this.versionManager.saveVersion();
     }
@@ -123,8 +123,8 @@ class Repository {
 
         const msg = `${Date.now()}. Inserted one element with id = '${item.id}' to "${this.filePath}"\n`;
         this.logger.log(msg); 
-        
-        await this.writeData();
+
+        await this.writeAllAsync();
     }
 
     async delete(id) {
@@ -135,7 +135,7 @@ class Repository {
             const msg = `${Date.now()}. Deleted one element with id = '${item.id}' from "${this.filePath}"\n`;
             this.logger.log(msg);
             
-            await this.writeData();
+            await this.writeAllAsync();
         }
     }
 
@@ -146,7 +146,7 @@ class Repository {
             await this.modify(item)
         }
 
-        await this.writeData();
+        await this.writeAllAsync();
     }
 
     find(id) {
@@ -166,16 +166,8 @@ class Repository {
             this.logger.log(msg); 
         }
 
-        await this.writeData();
+        await this.writeAllAsync();
     }
-
-    /*saveVersion(callback) {
-        var compress = zlib.createGzip(),
-        input = fs.createReadStream(filename),
-        output = fs.createWriteStream(filename + '.gz');
-
-        input.pipe(compress).pipe(output);
-    }*/
 }
 
 exports.Repositoty = Repository;

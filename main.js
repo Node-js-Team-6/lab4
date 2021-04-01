@@ -29,4 +29,17 @@ function main() {
 
     const rating1 = new Rating({id: getId(), userId: user.id, fileId: file2.id, score: 5});
     const rating2 = new Rating({id: getId(), userId: user2.id, fileId: file2.id, score: 3});
+
+    services.addOrUpdateUser(user);
+    services.addOrUpdateUser(user2);
+
+    services.addOrUpdateFolder(root);
+    services.addOrUpdateFolder(folder1);
+    services.addOrUpdateFile(file1);
+    services.addOrUpdateFile(file2);
+    services.addOrUpdateFile(file3);
+    services.addOrUpdateRating(rating1);
+    services.addOrUpdateRating(rating2);
+
+    
 }

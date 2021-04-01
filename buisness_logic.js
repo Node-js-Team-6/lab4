@@ -56,6 +56,10 @@ class Services {
         await this.userRepository.addOrUpdate(user)
     }
 
+    async addOrUpdateRating(rating) {
+        await this.ratingRepository.addOrUpdate(rating);
+    }
+
     sortByDownloadCount(folder) {
         folder.children.sort((a, b) => (a instanceof Folder || b instanceof Folder) ? 1 :
             b.downloadCount - a.downloadCount);
