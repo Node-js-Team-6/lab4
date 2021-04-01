@@ -16,31 +16,44 @@ class Services {
     }
 
     async addOrUpdateFile(file) {
-        await fileRepository.addOrUpdate(file)
+        await this.fileRepository.addOrUpdate(file)
     }
 
     async deleteFile(file) {
-        await fileRepository.delete(file)
+        await this.fileRepository.delete(file)
     }
 
     async addOrUpdateFolder(folder) {
-        await folderRepository.addOrUpdate(folder)
+        await this.folderRepository.addOrUpdate(folder)
+    }
+
+    async getChildren(folder){
+        let folderChildren = await this.folderRepository.findAll().filter(f => f.parentId === folder.id);
+        let fileChildren = await this.fileRepository.findAll().filter(f => f.parentId === folder.id)
+        folder.children = [...folderChildren, ...fileChildren]
+    }
+
+    async getRating(file)
+    {
+        let ratings = await this.ratingRepository.findAll();
+        let sum = ratings.filter(r => r.fileId === file.id).reduce((a, b) => a+b, 0)
+        return sum / ratings.length;
     }
 
     async deleteFolder(folder) {
         for (let c in folder.children) {
             if (c instanceof Folder) {
-                deleteFolder(c)
+                await this.deleteFolder(c)
             } else {
-                deleteFile(c)
+                await this.deleteFile(c)
             }
         }
 
-        await folderRepository.delete(folder)
+        await this.folderRepository.delete(folder)
     }
 
     async addOrUpdateUser(user) {
-        await userRepository.addOrUpdate(user)
+        await this.userRepository.addOrUpdate(user)
     }
 
     sortByDownloadCount(folder) {
@@ -53,7 +66,7 @@ class Services {
             b.rating - a.rating);
     }
 
-    sortByAuthor() {
+    sortByAuthor(folder) {
         folder.children.sort(function (a, b) {
             if (a.user.name > b.user.name) return 1;
             if (a.user.name < b.user.name) return -1;
@@ -78,10 +91,10 @@ class Services {
         return folder.children.filter(file => !(file instanceof Folder) && file.extension.startsWith(searchText));
     }
 
-    getPath(element, root) {
+    async getPath(element, root) {
         if (element.id === root.id)
             return element.name;
-        return getPath(folderRepository.find(element.parentId), root) + '/' + element.name;
+        return await this.getPath(await this.folderRepository.find(element.parentId), root) + '/' + element.name;
     }
 }
 
