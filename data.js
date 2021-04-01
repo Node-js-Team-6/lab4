@@ -7,19 +7,21 @@ const writefileAsync = util.promisify(fs.writeFile);
 
 class Repository {
 
-    constructor(filePath, mapToCustomTypeFunction, versionManager, logger = console) {
+    constructor(filePath, mapToCustomTypeFunction, logger = console) {
         this.filePath = filePath;
         this.logger = logger;
-        this.versionManager = versionManager;
         this.dataMapperToCustomType = mapToCustomTypeFunction;
-
+        let f =  this.dataMapperToCustomType({id: -1})
         this.Data = [];
-        this._nextId = 0;
+        this.readDataSync();
     }
 
     async readData() {
         this.Data = await this.readAllAsync();
-        this._nextId = Math.max(this.Data.map(o => o.id)) + 1;
+    }
+
+    readDataSync(){
+        this.Data = this.readAllSync();
     }
 
     readAllCallback(callback = function() {}) {
@@ -38,6 +40,11 @@ class Repository {
                 callback(this.getCustomizedObjects(data));
             }
         });
+    }
+
+    readAllSync() {
+        const start = Date.now();
+        return this.getCustomizedObjects(fs.readFileSync(this.filePath, 'utf-8'));
     }
 
     readAllAsyncPromise() {
@@ -83,7 +90,7 @@ class Repository {
         
         try {
             let data = [];
-            for(const item in this.Data) {
+            for(const item of this.Data) {
                 data.push(item.jsonify());
             }
             const str = JSON.stringify(data);
@@ -113,7 +120,6 @@ class Repository {
     };
 
     async insert(item) {
-        item.id = this._nextId++;
         this.Data.push(item);
 
         const msg = `${Date.now()}. Inserted one element with id = '${item.id}' to "${this.filePath}"\n`;

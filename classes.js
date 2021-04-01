@@ -21,6 +21,11 @@ class File{
         return {parentId: this.parentId, id: this.id, name: this.name, extension: this.extension, userId: this.userId,
             size: this.size, downloadCount: this.downloadCount, path: this.path}
     }
+
+    static objectify(data)
+    {
+        return new File(data);
+    }
 }
 
 class Folder{
@@ -41,6 +46,11 @@ class Folder{
         return {parentId: this.parentId, id: this.id, name: this.name, userId: this.userId, path: this.path}
     }
 
+    static objectify(data)
+    {
+        return new Folder(data);
+    }
+
 }
 
 class User{
@@ -53,6 +63,11 @@ class User{
     jsonify()
     {
         return {id: this.id, name: this.name}
+    }
+
+    static objectify(data)
+    {
+        return new User(data);
     }
 }
 
@@ -68,6 +83,11 @@ class Rating{
     jsonify()
     {
         return {id: this.id, userId: this.userId, fileId: this.fileId, score: this.score}
+    }
+
+    static objectify(data)
+    {
+        return new Rating(data);
     }
 }
 
