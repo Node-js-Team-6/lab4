@@ -28,12 +28,28 @@ class Services {
         await this.ratingRepository.addOrUpdate(rating);
     }
 
+    async addOrUpdateFolder(folder) {
+        await this.folderRepository.addOrUpdate(folder)
+    }
+
+    async addOrUpdateUser(user) {
+        await this.userRepository.addOrUpdate(user)
+    }
+
     async deleteFile(file) {
         await this.fileRepository.delete(file)
     }
 
-    async addOrUpdateFolder(folder) {
-        await this.folderRepository.addOrUpdate(folder)
+    async deleteFolder(folder) {
+        for (let c in folder.children) {
+            if (c instanceof Folder) {
+                await this.deleteFolder(c)
+            } else {
+                await this.deleteFile(c)
+            }
+        }
+
+        await this.folderRepository.delete(folder)
     }
 
     async getChildren(folder){
@@ -52,26 +68,6 @@ class Services {
         let ratings = await this.ratingRepository.findAll();
         let sum = ratings.filter(r => r.fileId === file.id).reduce((a, b) => a+b, 0)
         return sum / ratings.length;
-    }
-
-    async deleteFolder(folder) {
-        for (let c in folder.children) {
-            if (c instanceof Folder) {
-                await this.deleteFolder(c)
-            } else {
-                await this.deleteFile(c)
-            }
-        }
-
-        await this.folderRepository.delete(folder)
-    }
-
-    async addOrUpdateUser(user) {
-        await this.userRepository.addOrUpdate(user)
-    }
-
-    async addOrUpdateRating(rating) {
-        await this.ratingRepository.addOrUpdate(rating);
     }
 
     sortByDownloadCount(folder) {
