@@ -14,14 +14,14 @@ var server = net.createServer(function (connection) {
             connection.write(JSON.stringify(response));
         }
 
-        if (data.cmd === 'getChildren'){
+        if (data.cmd === 'getRating'){
             let file = data.param;
             let rating = await service.getRating(file);
             let response = {success: true, cmd: data.cmd, result: rating}
             connection.write(JSON.stringify(response));
         }
 
-        if (data.cmd === 'getRating'){
+        if (data.cmd === 'getChildren'){
             let folder = data.param;
             await service.getChildren(folder);
             let response = {success: true, cmd: data.cmd, result: folder.children}
