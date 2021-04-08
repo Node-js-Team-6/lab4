@@ -14,10 +14,10 @@ class Services {
         this.userRepository = new data.Repositoty('./database/user.json', User.objectify)
         this.ratingRepository = new data.Repositoty('./database/rating.json', Rating.objectify)
 
-        this.vm.subscribe_for_rollback(this.fileRepository.readData);
-        this.vm.subscribe_for_rollback(this.folderRepository.readData);
-        this.vm.subscribe_for_rollback(this.userRepository.readData);
-        this.vm.subscribe_for_rollback(this.ratingRepository.readData);
+        this.vm.subscribe_for_rollback(this.folderRepository);
+        this.vm.subscribe_for_rollback(this.userRepository);
+        this.vm.subscribe_for_rollback(this.ratingRepository);
+        this.vm.subscribe_for_rollback(this.fileRepository);
     }
 
     async addOrUpdateFile(file) {
@@ -44,7 +44,7 @@ class Services {
 
     async getRoot()
     {
-        return await this.folderRepository.find(994);
+        return await this.folderRepository.find(922);
     }
 
     async getRating(file)
@@ -116,12 +116,12 @@ class Services {
     }
 
     async saveCurrentState(){
-        await this.vm.saveVersion();
+        await this.vm.saveVersionPako();
     }
 
     async returnToPreviousVersion()
     {
-        await this.vm.rollbackVersion();
+        await this.vm.rollbackVersionPako();
     }
 }
 

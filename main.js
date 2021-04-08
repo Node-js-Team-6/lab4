@@ -8,7 +8,7 @@ const { User } = require("./classes");
 async function main() {
     const getId = () => Math.floor(Math.random() * 1000);
     const services = new Services();
-    //
+
     // const user = new User({name: 'Vova', id: getId()});
     // const user2 = new User({name: 'Misha', id: getId()});
     //
@@ -44,22 +44,26 @@ async function main() {
     // await services.addOrUpdateRating(rating1);
     // await services.addOrUpdateRating(rating2);
 
-    console.log("1")
+
+    console.log('----------Folder Example-----------')
     let root = await services.getRoot();
     await services.getChildren(root);
-    console.log(root);
+    console.log(root)
 
     await services.saveCurrentState();
-    services.addOrUpdateFile( new File({id: getId(), name: 'i_will_be_rollbacked.sad', parentId: root.id, user: 44, size: '228Mb', downloadCount: 1}))
-    console.log("2")
-    root = await services.getRoot();
-    await services.getChildren(root);
-    console.log(root);
+
+    root.children.push(new File({name: 'whatever'}));
+
+    console.log(root)
+    await services.saveCurrentState();
     await services.returnToPreviousVersion();
-    console.log("3")
+
     root = await services.getRoot();
     await services.getChildren(root);
-    console.log(root);
+    console.log(root)
+
+
+
 }
 
 main()
