@@ -1,16 +1,23 @@
-var net = require('net');
+const net = require('net');
 
-var service = require('./buisness_logic');
+const { Services } = require('./buisness_logic.js');
+const service = new Services();
 
-var server = net.createServer(function (connection) {
+const server = net.createServer(function (connection) {
     console.log('client connected');
 
     connection.on('data', async function (d) {
         const data = JSON.parse(d)
         if (data.cmd === 'getRoot'){
             let root = await service.getRoot();
+
+            console.log('Root:    ', root);
+
             service.getChildren(root);
-            let response = {success: true, cmd: data.cmd, result: root}
+
+            console.log('Root:    ', root);
+
+            let response = {success: true, cmd: data.cmd, result: root.children}
             connection.write(JSON.stringify(response));
         }
 
@@ -126,10 +133,13 @@ var server = net.createServer(function (connection) {
         console.log('client disconnected');
     });
 
-    connection.write('Hello World!\r\n');
     connection.pipe(connection);
 });
 
 server.listen(20202, function() {
     console.log('server is listening');
 });
+
+server.on('uncaughtException', function (err) {
+    console.log(err);
+}); 

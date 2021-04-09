@@ -7,12 +7,12 @@ const { User } = require("./classes.js");
 const { VersionManager } = require('./versioning.js');
 
 class Services {
-    constructor() {
-        this.vm = new VersionManager('./database');
-        this.fileRepository = new data.Repositoty('./database/file.json', File.objectify)
-        this.folderRepository = new data.Repositoty('./database/folder.json', Folder.objectify)
-        this.userRepository = new data.Repositoty('./database/user.json', User.objectify)
-        this.ratingRepository = new data.Repositoty('./database/rating.json', Rating.objectify)
+    constructor(logger=console) {
+        this.vm = new VersionManager('./database', logger);
+        this.fileRepository = new data.Repositoty('./database/file.json', File.objectify, logger);
+        this.folderRepository = new data.Repositoty('./database/folder.json', Folder.objectify, logger);
+        this.userRepository = new data.Repositoty('./database/user.json', User.objectify, logger);
+        this.ratingRepository = new data.Repositoty('./database/rating.json', Rating.objectify, logger);
 
         this.vm.subscribe_for_rollback(this.folderRepository);
         this.vm.subscribe_for_rollback(this.userRepository);
