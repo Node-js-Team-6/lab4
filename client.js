@@ -15,7 +15,7 @@ const client = new net.Socket();
 
 client.connect(20202, '127.0.0.1', function() {
 	console.log(`Connected to server`);
-    const msg = {cmd: "getRoot"};
+    const msg = {cmd: "getRootIn"};
 	client.write(JSON.stringify(msg));
 });
 
@@ -26,50 +26,47 @@ client.on('data', function(dataIn) {
     if(data.cmd === "getRating") {
         showFile(data.result, res => {
             if(res === 'd' || res === 'D') {
-                const msg = {cmd: "deleteFile", param: data.result};
+                const msg = {cmd: "deleteFileIn", param: data.result};
                 client.write(JSON.stringify(msg));
     
-                msg = {cmd: "getRoot"};
+                msg = {cmd: "getRootIn"};
                 client.write(JSON.stringify(msg));
             } else if (res === 'a' || res === 'A') {
-                const msg = {cmd: "getRoot"};
+                const msg = {cmd: "getRootIn"};
                 client.write(JSON.stringify(msg));
             }
         });
     }
 
-    if(data.cmd === "getRoot" || data.cmd === 'getChilder' || data.cmd === 'sortByRating' || 
+    if(data.cmd === "getRoot" || data.cmd === 'getChildren' || data.cmd === 'sortByRating' || 
        data.cmd === 'sortByAuthor' || data.cmd === 'sortByName' || data.cmd === 'sortByDownloadCount') {
 
-        console.log('Data:  ', data);
-
         showFolder(data.result, res => {
+
             if(res === 'r' || res === 'R') {
-                const msg = {cmd: 'sortByRating', param: new Folder({children: data.result})};
+                const msg = {cmd: 'sortByRatingIn', param: data.result};
                 client.write(JSON.stringify(msg));
             }
             if(res === 'a' || res === 'A') {
-                const msg = {cmd: 'sortByAuthor', param: new Folder({children: data.result})};
+                const msg = {cmd: 'sortByAuthorIn', param: data.result};
                 client.write(JSON.stringify(msg));
             }
             if(res === 'd' || res === 'D') {
-                const msg = {cmd: 'sortByDownloadCount', param: new Folder({children: data.result})};
+                const msg = {cmd: 'sortByDownloadCountIn', param: data.result};
                 client.write(JSON.stringify(msg));
             }
             if(res === 'n' || res === 'N') {
-                const msg = {cmd: 'sortByName', param: new Folder({children: data.result})};
+                const msg = {cmd: 'sortByNameIn', param: data.result};
                 client.write(JSON.stringify(msg));
             }
             if(!isNaN(res)) {
-                const elem = data.result[res];
+                const elem =  data.result instanceof Array ?  data.result[res] : data.result.children[res];
             
-                if(elem instanceof Folder) {
-                    const msg = {cmd: "getChilder", param: elem};
+                if(!elem.hasOwnProperty('size')) {
+                    const msg = {cmd: "getChildrenIn", param: elem};
                     client.write(JSON.stringify(msg));
-                }
-    
-                if(elem instanceof File) {
-                    const msg = {cmd: "getRating", param: elem};
+                } else {
+                    const msg = {cmd: "getRatingIn", param: elem};
                     client.write(JSON.stringify(msg));
                 }
             }
@@ -81,7 +78,12 @@ client.on('close', function() {
 	console.log('Connection closed');
 });
 
-function showFolder(data = [], callback) {
+function showFolder(folder, callback) {
+
+    console.log('  show folder: ', folder);
+    const data = folder instanceof Array ? folder : folder.children;
+
+    console.log('  after if show folder data: ', data);
     
     for(let i = 0; i < data.length; i++) {
         console.log(`${i}. ${data[i].name}`);
