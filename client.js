@@ -63,7 +63,7 @@ async function showFolder(folder, callback) {
     console.log('  after if show folder data: ', data);
     
     for(let i = 0; i < data.length; i++) {
-        console.log(`${i}. ${data[i].name} Rating: ${data[i].hasOwnProperty("rating") ? data[i].rating : "-"} Downloads: ${data[i].downloadCount}`);
+        console.log(`${i}. ${data[i].name} Rating: ${data[i].hasOwnProperty("rating") && data[i].rating ? data[i].rating : "-" } Downloads: ${data[i].downloadCount ?? '-'}`);
     }
 
     console.log("\nTo get information about file or to go to folder enter its number ");

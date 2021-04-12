@@ -2,27 +2,29 @@ const net = require('net');
 
 const { Services } = require('./buisness_logic.js');
 const { File } = require('./classes.js');
-const service = new Services();
+
+const logger = {
+    log: msg => console.log(msg)
+};
+const service = new Services(logger);
 
 const server = net.createServer(function (connection) {
-    console.log('client connected');
+    logger.log(`client connected. local address: '${connection.localAddress}' local port: '${connection.localPort}' remote address: '${connection.remoteAddress}' remote port: '${connection.remotePort}'`);
 
     connection.on('data', async function (d) {
         const data = JSON.parse(d);
 
-        console.log('  Data:  ', data);
-
         if (data.cmd === 'getRootIn'){
             let root = await service.getRoot();
             await service.getChildren(root);
-            let response = {success: true, cmd: data.cmd.slice(0, -2), result: root}
+            let response = {success: true, cmd: data.cmd.slice(0, -2), result: root};
             connection.write(JSON.stringify(response));
         }
 
         if (data.cmd === 'getRatingIn'){
             let file = data.param;
             file.rating = await service.getRating(file);
-            let response = {success: true, cmd: data.cmd.slice(0, -2), result: file}
+            let response = {success: true, cmd: data.cmd.slice(0, -2), result: file};
 
             connection.write(JSON.stringify(response));
         }
@@ -30,7 +32,7 @@ const server = net.createServer(function (connection) {
         if (data.cmd === 'getChildrenIn'){
             let folder = data.param;
             await service.getChildren(folder);
-            let response = {success: true, cmd: data.cmd.slice(0, -2), result: folder}
+            let response = {success: true, cmd: data.cmd.slice(0, -2), result: folder};
 
             connection.write(JSON.stringify(response));
         }
@@ -39,7 +41,7 @@ const server = net.createServer(function (connection) {
             let file = data.param;
             file.downloadCount++;
             await service.addOrUpdateFile(file);
-            let response = {success: true, cmd: data.cmd.slice(0, -2), result: file}
+            let response = {success: true, cmd: data.cmd.slice(0, -2), result: file};
             connection.write(JSON.stringify(response));
         }
 
@@ -111,8 +113,6 @@ const server = net.createServer(function (connection) {
             service.sortByName(folder);
             let response = {success: true, cmd: data.cmd.slice(0, -2), result: folder};
         
-            console.log('     Response: ', response);
-
             connection.write(JSON.stringify(response));
         }
 
@@ -143,16 +143,16 @@ const server = net.createServer(function (connection) {
     })
 
     connection.on('end', function() {
-        console.log('client disconnected');
+        logger.log('client disconnected');
     });
 
     connection.pipe(connection);
 
     connection.on('uncaughtException', function (err) {
-        console.log(err);
+        logger.log(err);
     }); 
 });
 
 server.listen(20202, function() {
-    console.log('server is listening');
+    logger.log('server is listening');
 });
