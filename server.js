@@ -1,6 +1,7 @@
 const net = require('net');
 
 const { Services } = require('./buisness_logic.js');
+const { File } = require('./classes.js');
 const service = new Services();
 
 const server = net.createServer(function (connection) {
@@ -34,10 +35,20 @@ const server = net.createServer(function (connection) {
             connection.write(JSON.stringify(response));
         }
 
+        if (data.cmd === 'downloadFileIn'){
+            let file = data.param;
+            file.downloadCount++;
+            await service.addOrUpdateFile(file);
+            let response = {success: true, cmd: data.cmd.slice(0, -2), result: file}
+            connection.write(JSON.stringify(response));
+        }
+
         else if (data.cmd === 'addOrUpdateFileIn'){
             let file = data.param;
-            await service.addOrUpdateFile(file);
-            let response = {success: true, cmd: data.cmd.slice(0, -2)};
+            await service.addOrUpdateFile(new File(file));
+            let folder = await service.getFolder(file.parentId);
+            await service.getChildren(folder);
+            let response = {success: true, cmd: data.cmd.slice(0, -2), result: folder};
             connection.write(JSON.stringify(response));
         }
 

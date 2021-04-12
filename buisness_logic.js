@@ -54,20 +54,40 @@ class Services {
 
     async getChildren(folder){
         let folderChildren = await this.folderRepository.findAll().filter(f => f.parentId === folder.id);
-        let fileChildren = await this.fileRepository.findAll().filter(f => f.parentId === folder.id)
+        let fileChildren = await this.fileRepository.findAll().filter(f => f.parentId === folder.id);
+        for (let c of folderChildren)
+        {
+            c.user = this.userRepository.find(c.userId);
+        }
+        for (let c of fileChildren)
+        {
+            c.user = await this.userRepository.find(c.userId);
+            c.rating = await this.getRating(c);
+        }
         folder.children = [...folderChildren, ...fileChildren]
+        console.log(folder.children);
     }
 
     async getRoot()
     {
-        return await this.folderRepository.find(922);
+        let root = await this.folderRepository.find(922);
+        root.user = await this.userRepository.find(root.userId);
+        return root;
+    }
+
+    async getFolder(id)
+    {
+        let folder = await this.folderRepository.find(id);
+        folder.user = await this.userRepository.find(folder.userId);
+        return folder;
     }
 
     async getRating(file)
     {
         let ratings = await this.ratingRepository.findAll();
-        let sum = ratings.filter(r => r.fileId === file.id).reduce((a, b) => a+b, 0)
-        return sum / ratings.length;
+        let filtered = ratings.filter(r => r.fileId === file.id);
+        let sum = filtered.map(r => r.score).reduce((a, b) => a+b, 0)
+        return sum / filtered.length;
     }
 
     sortByDownloadCount(folder) {
@@ -82,6 +102,8 @@ class Services {
 
     sortByAuthor(folder) {
         folder.children.sort(function (a, b) {
+            if (!a.user || !b.user)
+                return -1;
             if (a.user.name > b.user.name) return 1;
             if (a.user.name < b.user.name) return -1;
             return 0

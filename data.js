@@ -141,7 +141,7 @@ class Repository {
     }
 
     async addOrUpdate(item){
-        if(this.find(item.id) == null){
+        if(!this.find(item.id)){
             await this.insert(item)
         } else {
             await this.modify(item)
@@ -159,7 +159,15 @@ class Repository {
     }
 
     async modify(item) {
-        const ind = this.Data.indexOf(o => o.id === id);
+        let ind = -1;
+        for (let i = 0; i < this.Data.length; i++)
+        {
+            if (this.Data[i].id === item.id)
+            {
+                ind = i;
+                break;
+            }
+        }
         if(ind > -1) {
             this.Data[ind] = item;
 
